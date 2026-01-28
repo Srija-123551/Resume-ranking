@@ -1,0 +1,30 @@
+name: Deploy duplicate.html to S3
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "duplicate.html"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::361966321914:role/Project-4-role
+          aws-region: eu-north-1
+
+      - name: Upload duplicate.html to S3
+        run: |
+          aws s3 cp duplicate.html s3://${{ secrets.S3_BUCKET_NAME }}/duplicate.html
